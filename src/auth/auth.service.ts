@@ -17,16 +17,15 @@ export class AuthService {
         let passwordValid = false
         if (user) {
             passwordValid = await compare(pass, user.password)
-        } else {
-            throw new BadRequestException("User Invalid");
-        }
+        } 
         if (!passwordValid) {
             throw new UnauthorizedException();
         }
         const { password, ...result } = user;
-        const payload = { sub: user.id, email: user.email };
+        const payload = { sub: user.id, email: user.email, name: user.name };
         return {
-            access_token: await this.jwtService.signAsync(payload, { secret: 's3cretK3y' }),
+            access_token: await this.jwtService.signAsync(payload, { secret: 's3cretK3y', expiresIn: '1h' }),
+            user: {name: user.name, email: user.email}
         };
     }
 
